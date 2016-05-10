@@ -7,6 +7,20 @@ html {
     overflow: auto;
 }
 
+#fetchNew:active {
+    border-style: inset;
+}
+
+#fetchNew {
+    display: block;
+    border: 3px outset gray;
+    height: 20px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+}
+
 #showSettings {
     background: url(../img/settings.png) no-repeat;
     width: 20px;
@@ -36,7 +50,7 @@ html {
     color: white;
 }
 
-#photos {
+#right-column {
     position: absolute;
     z-index: 1000;
     top: 10px;
@@ -44,9 +58,13 @@ html {
 }
 
 #settings,
-#photos {
+#right-column {
     width: 300px;
     right: 40px;
+}
+
+#photos {
+    margin-top: 6px;
 }
 
 #photos img {

@@ -1,4 +1,8 @@
 var settings = {};
+var nextPageQuery = null;
+var baseQuery = 'https://api.twitter.com/1.1/search/tweets.json';
+var displayedImages = [];
+
 chrome.storage.local.get('settings', function(data) {
     if (data.settings) {
         settings.criteria = data.settings.criteria || '@PantallaBoca';
@@ -30,7 +34,7 @@ var oauth = OAuth({
 
 var getPhotos = function(callback) {
     var request_data = {
-        url: 'https://api.twitter.com/1.1/search/tweets.json?q=filter%3Aimages%20' + encodeURIComponent(settings.criteria),
+        url: baseQuery + (nextPageQuery || ('?q=filter%3Aimages%20' + encodeURIComponent(settings.criteria))),
         method: 'GET'
     };
     $.ajax({
@@ -44,35 +48,35 @@ var getPhotos = function(callback) {
                 r.push({url: media.media_url_https, author: tweet.user.screen_name});
             });
         });
+        nextPageQuery = data.search_metadata.next_results;
         callback(r);
+    });
+}
+
+var fetchPhotos = function() {
+    var $photos = $('#photos');
+    getPhotos(function(photos) {
+        $.each(photos, function(i, photo) {
+            if (displayedImages.indexOf(photo.url) === -1) {
+                displayedImages.push(photo.url);
+                loadImage(photo.url, function(image) {
+                    $photos.prepend(image);
+                });
+            }
+        });
     });
 }
 
 var refresh = function() {
     if (!settings.criteria) return;
+    nextPageQuery = null;
     $('#current').css({
         left: settings.left,
         top: settings.top
     });
-    var $photos = $('#photos').empty();
-    getPhotos(function(photos) {
-        $.each(photos, function(i, photo) {
-            loadImage(photo.url, function(image) {
-                $photos.append(image);
-            });
-        });
-        $photos.on('click', 'img', function(ev) {
-            $('#preview').empty();
-            var cropperHeader = new Croppic('preview', {
-                loadPicture: $(ev.currentTarget).attr('src'),
-                onBeforeImgCrop: function() {
-                    var source = $('#preview img');
-                    $('#current').empty().append(source.clone());
-                    $('#preview').empty();
-                }
-            });
-        });
-    });
+    $('#photos').empty();
+    displayedImages = [];
+    fetchPhotos();
 };
 
 $(function() {
@@ -100,4 +104,16 @@ $(function() {
         }
     });
     $('#settings').hide();
+    $('#fetchNew').click(fetchPhotos);
+    $('#photos').on('click', 'img', function(ev) {
+        $('#preview').empty();
+        var cropperHeader = new Croppic('preview', {
+            loadPicture: $(ev.currentTarget).attr('src'),
+            onBeforeImgCrop: function() {
+                var source = $('#preview img');
+                $('#current').empty().append(source.clone());
+                $('#preview').empty();
+            }
+        });
+    });
 });
