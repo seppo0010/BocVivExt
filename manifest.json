@@ -9,6 +9,7 @@
     }
   },
   "permissions": [
+      "storage",
       "app.window.fullscreen",
       "app.window.fullscreen.overrideEsc",
       "https://pbs.twimg.com/*",

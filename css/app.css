@@ -7,12 +7,46 @@ html {
     overflow: auto;
 }
 
-#photos {
+#showSettings {
+    background: url(../img/settings.png) no-repeat;
+    width: 20px;
+    height: 20px;
+    display: block;
+    position: fixed;
     top: 10px;
-    bottom: 10px;
-    width: 300px;
     right: 10px;
+}
+
+#settings {
+    position: fixed;
+    background: black;
+    z-index: 2000;
+    top: 0;
+    bottom: 0;
+    padding: 10px 0;
+}
+
+#settings label {
+    color: white;
+    font-size: 14px;
+}
+
+#settings input {
+    display: block;
+    color: white;
+}
+
+#photos {
     position: absolute;
+    z-index: 1000;
+    top: 10px;
+    right: 10px;
+}
+
+#settings,
+#photos {
+    width: 300px;
+    right: 40px;
 }
 
 #photos img {
