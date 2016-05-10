@@ -34,14 +34,15 @@ $(function() {
             });
         });
         $photos.on('click', 'img', function(ev) {
+            $('#preview').empty();
             var cropperHeader = new Croppic('preview', {
-                loadPicture: $(ev.currentTarget).attr('src')
+                loadPicture: $(ev.currentTarget).attr('src'),
+                onBeforeImgCrop: function() {
+                    var source = $('#preview img');
+                    $('#current').empty().append(source.clone());
+                    $('#preview').empty();
+                }
             });
         });
-    });
-    $('#deploy').click(function() {
-$('#deploy').remove();
-        var source = $('#preview img');
-        $('#current').empty().append(source.clone());
     });
 });

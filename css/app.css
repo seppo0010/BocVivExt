@@ -19,13 +19,25 @@ html {
     width: 300px;
 }
 
+#deploy {
+    display: block;
+    cursor: pointer;
+    background: url(../img/arrow.png) no-repeat;
+    width: 60px;
+    height: 60px;
+    left: 236px;
+    bottom: 308px;
+    position: absolute;
+}
+
 #current {
     width: 512px;
     height: 288px;
-    position: absolute;
+    position: fixed;
     top: 10px;
     left: 10px;
     overflow: hidden;
+    z-index: 1000;
 }
 
 #current img {
@@ -35,7 +47,7 @@ html {
 #preview {
     width: 512px;
     height: 288px;
-    position: absolute;
+    position: fixed;
     bottom: 10px;
     left: 10px;
 }
