@@ -33,5 +33,15 @@ $(function() {
                 $photos.append(image);
             });
         });
+        $photos.on('click', 'img', function(ev) {
+            var cropperHeader = new Croppic('preview', {
+                loadPicture: $(ev.currentTarget).attr('src')
+            });
+        });
+    });
+    $('#deploy').click(function() {
+$('#deploy').remove();
+        var source = $('#preview img');
+        $('#current').empty().append(source.clone());
     });
 });

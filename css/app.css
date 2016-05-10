@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    background: black;
 }
 html {
     overflow: auto;
@@ -16,4 +17,25 @@ html {
 
 #photos img {
     width: 300px;
+}
+
+#current {
+    width: 512px;
+    height: 288px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    overflow: hidden;
+}
+
+#current img {
+    position: absolute;
+}
+
+#preview {
+    width: 512px;
+    height: 288px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
 }
