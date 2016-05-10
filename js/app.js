@@ -20,18 +20,31 @@ var loadImage = function(url, callback) {
     xhr.send();
 };
 
+var oauth = OAuth({
+    consumer: {
+        public: 'kpzFhkLt5pEhRxL5pqFjh0p6n',
+        secret: 'IR57gSbc9NdDO503k0SAsv9nA3BI932zrjE9cNXi4Own10Rxdg'
+    },
+    signature_method: 'HMAC-SHA1'
+});
+
 var getPhotos = function(callback) {
-    $.ajax('https://twitter.com/search?f=images&vertical=default&q=' + encodeURI(settings.criteria) + '&src=typd', {
-        success: function(data) {
-            var images = $(data).find('.AdaptiveStreamGridImage').map(function(i, el) {
-                var $el = $(el);
-                return {
-                    url: $el.data('url'),
-                    author: $el.data('screenName')
-                }
+    var request_data = {
+        url: 'https://api.twitter.com/1.1/search/tweets.json?q=filter%3Aimages%20' + encodeURIComponent(settings.criteria),
+        method: 'GET'
+    };
+    $.ajax({
+        url: request_data.url,
+        type: request_data.method,
+        headers: oauth.toHeader(oauth.authorize(request_data))
+    }).done(function(data) {
+        var r = [];
+        data.statuses.forEach(function(tweet) {
+            ((tweet.entities || {}).media || []).forEach(function(media) {
+                r.push({url: media.media_url_https, author: tweet.user.screen_name});
             });
-            callback(images);
-        }
+        });
+        callback(r);
     });
 }
 

@@ -13,6 +13,7 @@
       "app.window.fullscreen",
       "app.window.fullscreen.overrideEsc",
       "https://pbs.twimg.com/*",
+      "https://api.twitter.com/*",
       "https://twitter.com/*"
   ],
   "icons": { "16": "img/bird.png", "128": "img/bird_large.png" }
