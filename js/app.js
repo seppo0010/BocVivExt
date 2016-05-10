@@ -45,4 +45,10 @@ $(function() {
             });
         });
     });
+    $(document).on('keydown keyup', function(ev) {
+        if (ev.keyCode === 27) {
+            $('#current').empty();
+            ev.preventDefault();
+        }
+    });
 });
