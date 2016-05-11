@@ -11,12 +11,14 @@ chrome.storage.local.get('settings', function(data) {
     refresh();
 });
 
-var loadImage = function(url, callback) {
+var loadImage = function(photo, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
+    xhr.open('GET', photo.url, true);
     xhr.responseType = 'blob';
     xhr.onload = function(e) {
       var img = document.createElement('img');
+      img.width = 300;
+      img.height = photo.height * 300 / photo.width;
       img.src = window.URL.createObjectURL(this.response);
       callback(img);
     };
@@ -44,7 +46,12 @@ var getPhotos = function(callback) {
         var r = [];
         data.statuses.forEach(function(tweet) {
             ((tweet.entities || {}).media || []).forEach(function(media) {
-                r.push({url: media.media_url_https, author: tweet.user.screen_name});
+                r.push({
+                    width: media.sizes.large.w,
+                    height: media.sizes.large.h,
+                    url: media.media_url_https,
+                    author: tweet.user.screen_name
+                });
             });
         });
         nextPageQuery = data.search_metadata.next_results;
@@ -58,7 +65,7 @@ var fetchPhotos = function() {
         $.each(photos, function(i, photo) {
             if (displayedImages.indexOf(photo.url) === -1) {
                 displayedImages.push(photo.url);
-                loadImage(photo.url, function(image) {
+                loadImage(photo, function(image) {
                     $photos.prepend(image);
                 });
             }
