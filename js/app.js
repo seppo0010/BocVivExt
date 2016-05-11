@@ -4,12 +4,11 @@ var baseQuery = 'https://api.twitter.com/1.1/search/tweets.json';
 var displayedImages = [];
 
 chrome.storage.local.get('settings', function(data) {
-    if (data.settings) {
-        settings.criteria = data.settings.criteria || '@PantallaBoca';
-        settings.left = data.settings.left || 10;
-        settings.top = data.settings.top || 10;
-        refresh();
-    }
+    data.settings = data.settings || {};
+    settings.criteria = data.settings.criteria || '@PantallaBoca';
+    settings.left = data.settings.left || 10;
+    settings.top = data.settings.top || 10;
+    refresh();
 });
 
 var loadImage = function(url, callback) {
