@@ -148,9 +148,27 @@ $(function() {
             return;
         }
         var reader = new FileReader();
-        reader.addEventListener('loadend', function(e, file) {
-            loadImageInPreview(this.result);
-        });
+        if (file.type.substr(0, 6) === 'image/') {
+            reader.addEventListener('loadend', function(e, file) {
+                loadImageInPreview(this.result);
+            });
+        } else if (file.type.substr(0, 6) === 'video/') {
+            reader.addEventListener('loadend', function(e, f) {
+                $('#preview').html(
+                    $('<video>', {'loop': true, 'autoplay': true})
+                        .css({width: '100%', height: '100%'})
+                            .append($('<source>').attr({src: this.result, type: file.type})
+                    )
+                );
+            });
+        } else {
+            return;
+        }
         reader.readAsDataURL(file);
+    });
+    $('#preview').on('click', 'video', function() {
+        var $preview = $('#preview');
+        $('#current').html($preview.html());
+        $preview.html('');
     });
 });
