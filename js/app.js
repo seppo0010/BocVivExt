@@ -1,7 +1,6 @@
 var settings = {};
 var nextPageQuery = null;
 var baseQuery = 'https://api.twitter.com/1.1/search/tweets.json';
-var displayedImages = [];
 
 chrome.storage.local.get('settings', function(data) {
     data.settings = data.settings || {};
@@ -12,17 +11,24 @@ chrome.storage.local.get('settings', function(data) {
 });
 
 var loadImage = function(photo, callback) {
+    var $div = $('<div>').data({
+        photo: photo
+    }).css({
+        width: 300,
+        height: photo.height * 300 / photo.width
+    });
+    $div.append($('<span>').text(photo.author).attr({class: 'screen_name'}));
+    $div.append($('<span>').text(photo.date).attr({class: 'date'}));
     var xhr = new XMLHttpRequest();
     xhr.open('GET', photo.url, true);
     xhr.responseType = 'blob';
     xhr.onload = function(e) {
-      var img = document.createElement('img');
-      img.width = 300;
-      img.height = photo.height * 300 / photo.width;
-      img.src = window.URL.createObjectURL(this.response);
-      callback(img);
+        var img = document.createElement('img');
+        img.src = window.URL.createObjectURL(this.response);
+        $div.append(img);
     };
     xhr.send();
+    callback($div);
 };
 
 var oauth = OAuth({
@@ -50,6 +56,7 @@ var getPhotos = function(callback) {
                     width: media.sizes.large.w,
                     height: media.sizes.large.h,
                     url: media.media_url_https,
+                    date: new Date(tweet.created_at),
                     author: tweet.user.screen_name
                 });
             });
@@ -63,13 +70,19 @@ var fetchPhotos = function() {
     var $photos = $('#photos');
     getPhotos(function(photos) {
         $.each(photos, function(i, photo) {
-            if (displayedImages.indexOf(photo.url) === -1) {
-                displayedImages.push(photo.url);
-                loadImage(photo, function(image) {
-                    $photos.prepend(image);
-                });
-            }
+            loadImage(photo, function(image) {
+                $photos.prepend(image);
+            });
         });
+        var $els = $photos.children();
+        $els.sort(function(a, b) {
+            var adate = $(a).data('photo').date;
+            var bdate = $(b).data('photo').date;
+            if (adate > bdate) return -1;
+            else if (adate < bdate) return 1;
+            else return 0;
+        });
+        $els.detach().appendTo($photos);
     });
 }
 
@@ -81,7 +94,6 @@ var refresh = function() {
         top: settings.top
     });
     $('#photos').empty();
-    displayedImages = [];
     fetchPhotos();
 };
 

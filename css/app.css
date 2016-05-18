@@ -72,6 +72,25 @@ html {
     cursor: pointer;
 }
 
+#photos div {
+    position: relative;
+}
+
+#photos span {
+    position: absolute;
+    right: 0;
+    color: white;
+    background: black;
+}
+
+#photos span.screen_name {
+    top: 0;
+}
+
+#photos span.date {
+    bottom: 0;
+}
+
 #deploy {
     display: block;
     cursor: pointer;
