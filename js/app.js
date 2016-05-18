@@ -61,7 +61,7 @@ var getPhotos = function(callback) {
                 });
             });
         });
-        nextPageQuery = data.search_metadata.next_results;
+        nextPageQuery = data.search_metadata.refresh_url;
         callback(r);
     });
 }
