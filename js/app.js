@@ -97,6 +97,18 @@ var refresh = function() {
     fetchPhotos();
 };
 
+var loadImageInPreview = function(img) {
+    $('#preview').empty();
+    var cropperHeader = new Croppic('preview', {
+        loadPicture: img,
+        onBeforeImgCrop: function() {
+            var source = $('#preview img');
+            $('#current').empty().append(source.clone());
+            $('#preview').empty();
+        }
+    });
+};
+
 $(function() {
     $(document).on('keydown keyup', function(ev) {
         if (ev.keyCode === 27) {
@@ -124,14 +136,21 @@ $(function() {
     $('#settings').hide();
     $('#fetchNew').click(fetchPhotos);
     $('#photos').on('click', 'img', function(ev) {
-        $('#preview').empty();
-        var cropperHeader = new Croppic('preview', {
-            loadPicture: $(ev.currentTarget).attr('src'),
-            onBeforeImgCrop: function() {
-                var source = $('#preview img');
-                $('#current').empty().append(source.clone());
-                $('#preview').empty();
-            }
+        loadImageInPreview($(ev.currentTarget).attr('src'));
+    });
+    $('html').on('dragover dragleave drop', function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+    });
+    $('html').on('drop', function(ev) {
+        var file = ev.originalEvent.dataTransfer.files[0];
+        if (!file) {
+            return;
+        }
+        var reader = new FileReader();
+        reader.addEventListener('loadend', function(e, file) {
+            loadImageInPreview(this.result);
         });
+        reader.readAsDataURL(file);
     });
 });
