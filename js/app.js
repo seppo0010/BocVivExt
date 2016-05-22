@@ -1,4 +1,5 @@
 var settings = {};
+var initialTime = null;
 var nextPageQuery = null;
 var baseQuery = 'https://api.twitter.com/1.1/search/tweets.json';
 
@@ -86,12 +87,20 @@ var fetchPhotos = function() {
     });
 }
 
+var updateTime = function() {
+    $('#currentTime').text(initialTime ? Math.floor((Date.now() - initialTime) / 1000) : '');
+};
+
 var refresh = function() {
     if (!settings.criteria) return;
     nextPageQuery = null;
     $('#current').css({
         left: settings.left,
         top: settings.top
+    });
+    $('#currentTime').css({
+        left: settings.left,
+        top: settings.top + 300
     });
     $('#photos').empty();
     fetchPhotos();
@@ -103,6 +112,8 @@ var loadImageInPreview = function(img) {
         loadPicture: img,
         onBeforeImgCrop: function() {
             var source = $('#preview img');
+            initialTime = Date.now();
+            updateTime();
             $('#current').empty().append(source.clone());
             $('#preview').empty();
         }
@@ -113,9 +124,12 @@ $(function() {
     $(document).on('keydown keyup', function(ev) {
         if (ev.keyCode === 27) {
             $('#current').empty();
+            initialTime = null;
+            updateTime();
             ev.preventDefault();
         }
     });
+    setInterval(updateTime, 1000);
     $('#showSettings').click(function(ev) {
         ev.preventDefault();
         var $settings = $('#settings');
